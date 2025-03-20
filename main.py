@@ -23,7 +23,7 @@ async def webhook(request: Request):
 
     # Если тип запроса "confirmation", сразу возвращаем ответ
     if body.get("type") == "confirmation":
-        return JSONResponse(content="0a37b2da")
+        return PlainTextResponse("0a37b2da")
 
     # Для остальных типов выполняем валидацию через модель
     notification = VkNotification.parse_obj(body)
