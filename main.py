@@ -1,6 +1,6 @@
 from fastapi import FastAPI
-from app.bot import vk_bot
-from app.commands import register_commands
+from bot import vk_bot
+from commands import register_commands
 
 app = FastAPI()
 

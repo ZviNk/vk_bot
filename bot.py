@@ -1,7 +1,7 @@
-from app.commands import CommandManager
-from app.config import VK_API_TOKEN, GROUP_ID
+from commands import CommandManager
+from config import VK_API_TOKEN, GROUP_ID
 from vk_api import VkApi
-from app.utils.vk_utils import get_updates
+from utils.vk_utils import get_updates
 
 
 class VkBot:

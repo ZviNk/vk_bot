@@ -1,7 +1,7 @@
-from app.commands.command_manager import CommandManager
-from app.commands.help import HelpCommand
-from app.commands.weather import WeatherCommand
-from app.commands.echo import EchoCommand
+from commands.command_manager import CommandManager
+from commands.help import HelpCommand
+from commands.weather import WeatherCommand
+from commands.echo import EchoCommand
 
 command_manager = CommandManager()
 
