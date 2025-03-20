@@ -7,6 +7,8 @@ import hashlib
 import hmac
 import json
 from dotenv import load_dotenv
+from uvicorn.config import Config  # Импортируем Config
+from uvicorn.server import Server  # Импортируем Server
 
 # Загружаем переменные окружения
 load_dotenv()
@@ -16,7 +18,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 
 app = FastAPI()
 
-# Попробуйте настроить сервер с явными параметрами
+# Настроим конфигурацию и сервер
 config = Config(app, loop="asyncio", http=h11)
 server = Server(config=config)
 server.run()
