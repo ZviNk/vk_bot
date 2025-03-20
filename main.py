@@ -16,16 +16,10 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 
 app = FastAPI()
 
-# Модель для уведомлений от VK
-class VkNotification(BaseModel):
-    type: str
-    group_id: int
-    secret_key: str
-    object: dict  # Уведомление с объектом, например, сообщение
 
 # Обработчик вебхуков (и подтверждение, и уведомления)
 @app.post("/webhook")
-async def webhook(request: Request, notification: VkNotification):
+async def webhook(request: Request):
     # Получаем тело запроса
     body = await request.json()
     print(request.json())
