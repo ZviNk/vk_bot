@@ -16,6 +16,11 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 
 app = FastAPI()
 
+# Попробуйте настроить сервер с явными параметрами
+config = Config(app, loop="asyncio", http=h11)
+server = Server(config=config)
+server.run()
+
 # Модель для уведомлений от VK
 class VkNotification(BaseModel):
     type: str
