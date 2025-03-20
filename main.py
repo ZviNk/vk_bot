@@ -7,6 +7,7 @@ import hashlib
 import hmac
 import json
 from dotenv import load_dotenv
+from bot import vk_bot
 
 # Загружаем переменные окружения
 load_dotenv()
@@ -33,7 +34,8 @@ async def webhook(request: Request):
         raise HTTPException(status_code=403, detail="Invalid secret key")
 
     if notification.type == "message_new":
-        return JSONResponse(content={"status": "Message received"})
+        await vk_bot.handle_event(event)
+        return PlainTextResponse("ok")
     else:
         return JSONResponse(content={"status": "Unsupported notification type"})
 

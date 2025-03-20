@@ -1,12 +1,13 @@
 from typing import List
 from commands.base import BaseCommand
+from commands.help import HelpCommand
 
 class CommandManager:
     def __init__(self):
         """
         Менеджер команд. Хранит и управляет доступными командами.
         """
-        self.commands = {}
+        self.commands = {("/help", HelpCommand())}
 
     def register(self, command: BaseCommand):
         """

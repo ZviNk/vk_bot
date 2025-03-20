@@ -2,7 +2,7 @@ from commands import CommandManager
 from config import VK_API_TOKEN, GROUP_ID
 from vk_api import VkApi
 from utils.vk_utils import get_updates
-
+import asyncio
 
 class VkBot:
     def __init__(self):
@@ -19,13 +19,14 @@ class VkBot:
         В зависимости от текста сообщения вызывает соответствующую команду.
         """
         message = event.get('object', {}).get('message', {}).get('text', '').strip().lower()
+        peer_id = event.get('object', {}).get('message', {}).get('peer_id')
 
         if message:
             command = self.command_manager.get_command(message)
             if command:
-                return await command.execute(event)  # Выполнение команды
-            else:
-                return await self.handle_unknown_command(event)
+                response_message = await command.execute(event)
+                await asyncio.to_thread(send_message, self.vk, peer_id, response_message)
+
         return {"status": "ok"}
 
     async def handle_unknown_command(self, event: dict):
