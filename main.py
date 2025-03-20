@@ -16,24 +16,23 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 
 app = FastAPI()
 
-
 # Обработчик вебхуков (и подтверждение, и уведомления)
 @app.post("/webhook")
 async def webhook(request: Request):
-    # Получаем тело запроса
     body = await request.json()
-    print(request.json())
-    # Если тип запроса "confirmation", подтверждаем вебхук
+
+    # Если тип запроса "confirmation", сразу возвращаем ответ
     if body.get("type") == "confirmation":
         return JSONResponse(content="0a37b2da")
 
-    # Проверка секретного ключа для других типов уведомлений
-    if body.get("secret_key") != SECRET_KEY:
+    # Для остальных типов выполняем валидацию через модель
+    notification = VkNotification.parse_obj(body)
+
+    # Здесь можно добавить проверку secret_key и дальнейшую обработку уведомления
+    if notification.secret_key != SECRET_KEY:
         raise HTTPException(status_code=403, detail="Invalid secret key")
 
-    # Обработка уведомлений
-    if body.get("type") == "message_new":
-        # Пример обработки нового сообщения
+    if notification.type == "message_new":
         return JSONResponse(content={"status": "Message received"})
     else:
         return JSONResponse(content={"status": "Unsupported notification type"})
