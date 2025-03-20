@@ -28,7 +28,7 @@ class VkNotification(BaseModel):
 async def webhook(request: Request, notification: VkNotification):
     # Получаем тело запроса
     body = await request.json()
-
+    print(request.json())
     # Если тип запроса "confirmation", подтверждаем вебхук
     if body.get("type") == "confirmation":
         return JSONResponse(content="0a37b2da")
