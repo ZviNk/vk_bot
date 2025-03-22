@@ -1,7 +1,3 @@
-fastapi
-uvicorn
-h11
-vk-api
-pydantic
-requests
+vk_api
 python-dotenv
+aiohttp

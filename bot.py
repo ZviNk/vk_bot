@@ -1,41 +1,40 @@
-from commands import CommandManager
-from config import VK_API_TOKEN, GROUP_ID
-from vk_api import VkApi
-from utils.vk_utils import get_updates
-import asyncio
+import vk_api
+import logging
+from vk_api.longpoll import VkLongPoll, VkEventType
+from dotenv import load_dotenv
+import os
 
-class VkBot:
-    def __init__(self):
-        """
-        Инициализация бота. Подключение к VK API.
-        """
-        self.vk = VkApi(token=VK_API_TOKEN)  # Создаем объект для работы с VK API
-        self.group_id = GROUP_ID  # ID вашей группы
-        self.command_manager = CommandManager()  # Менеджер команд
+from commands import start, help
 
-    async def handle_event(self, event: dict):
-        """
-        Обработка входящего события от VK.
-        В зависимости от текста сообщения вызывает соответствующую команду.
-        """
-        message = event.get('object', {}).get('message', {}).get('text', '').strip().lower()
-        peer_id = event.get('object', {}).get('message', {}).get('peer_id')
+load_dotenv()
 
-        if message:
-            command = self.command_manager.get_command(message)
-            if command:
-                response_message = await command.execute(event)
-                await asyncio.to_thread(send_message, self.vk, peer_id, response_message)
+VK_TOKEN = os.getenv('VK_TOKEN')
 
-        return {"status": "ok"}
+# Настройка логирования
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
-    async def handle_unknown_command(self, event: dict):
-        """
-        Обработка неизвестных команд.
-        """
-        return {
-            "response": "Команда не распознана. Попробуйте использовать 'help' для списка доступных команд."
-        }
+def main():
+    vk_session = vk_api.VkApi(token=VK_TOKEN)
+    longpoll = VkLongPoll(vk_session)
 
+    logger.info("Бот запущен")
 
-vk_bot = VkBot()
+    for event in longpoll.listen():
+        if event.type == VkEventType.MESSAGE_NEW and event.to_me:
+            logger.info(f"Новое сообщение от {event.user_id}: {event.text}")
+
+            # Обработка команды
+            if event.text.lower() == "/start":
+                start.handle(event, vk_session)
+            elif event.text.lower() == "/help":
+                help.handle(event, vk_session)
+            else:
+                vk_session.method('messages.send', {
+                    'user_id': event.user_id,
+                    'message': 'Неизвестная команда. Введите /help для помощи.',
+                    'random_id': 0
+                })
+
+if __name__ == '__main__':
+    main()

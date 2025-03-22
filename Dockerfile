@@ -1,13 +1,17 @@
-FROM python:3.10-slim
+# Используем официальный образ Python
+FROM python:3.9-slim
 
+# Устанавливаем рабочую директорию
 WORKDIR /app
 
-COPY requirements.txt .
+# Копируем файлы проекта в контейнер
+COPY . /app
 
+# Устанавливаем зависимости
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY . .
+# Устанавливаем переменные окружения
+ENV PYTHONUNBUFFERED=1
 
-EXPOSE 8000
-
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--loop", "asyncio"]
+# Запускаем бота
+CMD ["python", "bot.py"]
